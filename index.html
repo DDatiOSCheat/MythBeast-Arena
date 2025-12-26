@@ -25,9 +25,22 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
         canvas {
-  touch-action: none;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+/* Mobile (touch thật) */
+@media (pointer: coarse) {
+  canvas {
+    touch-action: auto;
+  }
+}
+
+/* Desktop (fake touch) */
+@media (pointer: fine) {
+  canvas {
+    touch-action: none;
+  }
 }
         #content { background: #ffffff; }
     </style>
@@ -69,6 +82,11 @@
 
 <script>
 (function () {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    console.log("[INFO] Mobile detected → native touch only");
+    return;
+  }
   if (window.__FAKE_TOUCH_ENABLED__) return;
   window.__FAKE_TOUCH_ENABLED__ = true;
 
@@ -114,6 +132,7 @@
     }
 
     canvas.addEventListener("pointerdown", e => {
+      if (e.pointerType !== "mouse") return;
       if (e.button !== 0) return;
       e.preventDefault();
       canvas.setPointerCapture(e.pointerId);
