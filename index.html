@@ -24,6 +24,11 @@
             display: flex; justify-content: center; align-items: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
+        canvas {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
         #content { background: #ffffff; }
     </style>
 </head>
@@ -59,7 +64,98 @@
 			});
 		});
 	});
-    setTimeout(function() { document.dispatchEvent(new Event('deviceready')); }, 2000);
+    setTimeout(function() { document.dispatchEvent(new Event('deviceready')); }, 3000);
+</script>
+
+<script>
+(function () {
+  if (window.__FAKE_TOUCH_ENABLED__) return;
+  window.__FAKE_TOUCH_ENABLED__ = true;
+
+  let isDown = false;
+  let canvas = null;
+
+  const waitCanvas = setInterval(() => {
+    canvas = document.querySelector("canvas");
+    if (canvas) {
+      clearInterval(waitCanvas);
+      init();
+      console.log("[OK] Fake touch ready");
+    }
+  }, 100);
+
+  function init() {
+    canvas.setAttribute("tabindex", "0");
+    canvas.focus();
+
+    function createTouch(type, x, y) {
+      const touch = new Touch({
+        identifier: 0,
+        target: canvas,
+        clientX: x,
+        clientY: y,
+        pageX: x,
+        pageY: y,
+        radiusX: 10,
+        radiusY: 10,
+        rotationAngle: 0,
+        force: 1
+      });
+
+      const event = new TouchEvent(type, {
+        touches: type === "touchend" ? [] : [touch],
+        targetTouches: type === "touchend" ? [] : [touch],
+        changedTouches: [touch],
+        bubbles: true,
+        cancelable: true
+      });
+
+      canvas.dispatchEvent(event);
+    }
+
+    canvas.addEventListener("pointerdown", e => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      canvas.setPointerCapture(e.pointerId);
+      isDown = true;
+      createTouch("touchstart", e.clientX, e.clientY);
+    });
+
+    window.addEventListener("pointermove", e => {
+      if (!isDown) return;
+      createTouch("touchmove", e.clientX, e.clientY);
+    });
+
+    window.addEventListener("pointerup", e => {
+      if (!isDown) return;
+      isDown = false;
+      createTouch("touchend", e.clientX, e.clientY);
+    });
+
+    window.addEventListener("blur", () => {
+      if (!isDown) return;
+      isDown = false;
+      createTouch("touchend", 0, 0);
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && isDown) {
+        isDown = false;
+        createTouch("touchend", 0, 0);
+      }
+    });
+  }
+})();
+</script>
+
+
+<script>
+document.addEventListener("contextmenu", function (e) {
+  if (e.target.tagName === "CANVAS") {
+    e.preventDefault();
+    return false;
+  }
+});
 </script>
 </body>
 </html>
