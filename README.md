@@ -12,7 +12,7 @@ The main goals of this project are:
 
 * Learning and practicing game development
 * Understanding turn-based combat mechanics
-* Experimenting with HTML / JavaScript / Canvas / Cordova (if applicable)
+* Experimenting with HTML / JavaScript / Canvas / Cordova
 
 This project is **not an official product** and has **no affiliation** with the original developers or publishers of Dynamons World.
 
