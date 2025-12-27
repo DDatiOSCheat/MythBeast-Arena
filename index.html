@@ -16,6 +16,7 @@
         window.cordova = { plugin: { cloudsettings: { isSignedInToICloud: function(callback) { if (typeof callback === 'function') { callback(false); } }, enableDebug: function() {}, exists: function() {}, save: function() {}, load:function() {} } }, plugins: { impacTracking: window.plugins.impacTracking, firebase: { analytics: { logEvent: function(name, params) { console.log("Mock: FirebaseAnalytics.logEvent() -> Name: " + name, params); } } } } };
     </script>
     <script type="text/javascript" src="./lib/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script type="text/javascript" src="./lib/firebase-database.js"></script>
 	<style>
         html, body {
