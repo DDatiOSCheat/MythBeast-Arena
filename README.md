@@ -1,1 +1,1 @@
-discord : ddatios._.
+discord : tinysweet_dev
